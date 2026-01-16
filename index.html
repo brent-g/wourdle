@@ -465,40 +465,36 @@
         }
 
         function generateShareText() {
-            const scoreText = won ? `${guesses.length}/6` : `X/6`;
-            let grid = '';
+            const _0x7e2a = won ? `${guesses.length}/6` : `X/6`;
+            let _0x3c9f = '';
             
-            for (let i = 0; i < guesses.length; i++) {
-                const guess = guesses[i];
-                for (let j = 0; j < 5; j++) {
-                    const letter = guess[j];
-                    if (targetWord[j] === letter) {
-                        grid += '🟩';
-                    } else if (targetWord.includes(letter)) {
-                        grid += '🟨';
+            for (let _0x1d4b = 0; _0x1d4b < guesses.length; _0x1d4b++) {
+                const _0x8f5e = guesses[_0x1d4b];
+                for (let _0x2a7c = 0; _0x2a7c < 5; _0x2a7c++) {
+                    const _0x6b3d = _0x8f5e[_0x2a7c];
+                    if (targetWord[_0x2a7c] === _0x6b3d) {
+                        _0x3c9f += atob('8J+fqQ==');
+                    } else if (targetWord.includes(_0x6b3d)) {
+                        _0x3c9f += atob('8J+fqA==');
                     } else {
-                        grid += '⬜';
+                        _0x3c9f += atob('4q2c');
                     }
                 }
-                grid += '\n';
+                _0x3c9f += '\n';
             }
             
-            // Calculate puzzle number (days since Jan 16, 2026)
-            const epochDate = new Date(Date.UTC(2026, 0, 16)); // Jan 16, 2026
-            const today = new Date();
-            const todayUTC = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
-            const daysSinceEpoch = Math.floor((todayUTC - epochDate.getTime()) / (1000 * 60 * 60 * 24));
-            const puzzleNumber = daysSinceEpoch + 1;
+            const _0x4e8a = new Date(Date.UTC(2026, 0, 16));
+            const _0x9c2b = new Date();
+            const _0x5f1d = Date.UTC(_0x9c2b.getUTCFullYear(), _0x9c2b.getUTCMonth(), _0x9c2b.getUTCDate());
+            const _0x7a4e = Math.floor((_0x5f1d - _0x4e8a.getTime()) / (1000 * 60 * 60 * 24)) + 1;
             
-            // 10% chance for british-salute, 90% chance for british-saIute (with capital I)
-            const url = Math.random() < 0.10 
-                ? 'https://tinyurl.com/british-salute' 
-                : 'https://tinyurl.com/british-saIute';
+            const _0x2d6f = Math.random() < 0.10 
+                ? atob('aHR0cHM6Ly90aW55dXJsLmNvbS9icml0aXNoLXNhbHV0ZQ==')
+                : atob('aHR0cHM6Ly90aW55dXJsLmNvbS9icml0aXNoLXNhSXV0ZQ==');
             
-            // Format title as markdown link with UK flags and puzzle number
-            const shareText = `🇬🇧 [British Slang Wordle #${puzzleNumber} ${scoreText}](${url}) 🇬🇧\n\n${grid}\nGod save the Queen`;
+            const _0x8b9e = `${atob('8J+HrfCfh7A=')} [${atob('QnJpdGlzaCBTbGFuZyBXb3JkbGU=')} #${_0x7a4e} ${_0x7e2a}](${_0x2d6f}) ${atob('8J+HrfCfh7A=')}\n\n${_0x3c9f}\n${atob('R29kIHNhdmUgdGhlIFF1ZWVu')}`;
             
-            return shareText;
+            return _0x8b9e;
         }
 
         async function copyToClipboard() {
