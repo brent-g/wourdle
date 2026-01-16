@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>British Slang Wordle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #111827;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: #9ca3af;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .message {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            min-height: 3rem;
+        }
+
+        .message.show {
+            background-color: #374151;
+        }
+
+        .message.win {
+            background-color: #059669;
+        }
+
+        .grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+
+        .row {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .cell {
+            width: 3.5rem;
+            height: 3.5rem;
+            border: 2px solid #4b5563;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 0.25rem;
+            background-color: #374151;
+        }
+
+        .cell.correct {
+            background-color: #059669;
+            border-color: #047857;
+        }
+
+        .cell.present {
+            background-color: #eab308;
+            border-color: #ca8a04;
+        }
+
+        .cell.absent {
+            background-color: #6b7280;
+            border-color: #4b5563;
+        }
+
+        .keyboard {
+            margin-bottom: 1.5rem;
+        }
+
+        .keyboard-row {
+            display: flex;
+            gap: 0.25rem;
+            justify-content: center;
+            margin-bottom: 0.25rem;
+        }
+
+        .key {
+            background-color: #4b5563;
+            color: white;
+            font-weight: bold;
+            padding: 0.75rem 0.5rem;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            min-width: 2.5rem;
+            font-size: 0.875rem;
+            transition: opacity 0.2s;
+        }
+
+        .key:hover {
+            opacity: 0.8;
+        }
+
+        .key.wide {
+            padding: 0.75rem 1rem;
+            font-size: 0.75rem;
+        }
+
+        .key.correct {
+            background-color: #059669;
+        }
+
+        .key.present {
+            background-color: #eab308;
+        }
+
+        .key.absent {
+            background-color: #1f2937;
+        }
+
+        .play-again {
+            width: 100%;
+            background-color: #2563eb;
+            color: white;
+            font-weight: bold;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+            display: none;
+        }
+
+        .play-again:hover {
+            background-color: #1d4ed8;
+        }
+
+        .play-again.show {
+            display: block;
+        }
+
+        .share-button {
+            width: 100%;
+            background-color: #059669;
+            color: white;
+            font-weight: bold;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+            display: none;
+            margin-bottom: 0.5rem;
+        }
+
+        .share-button:hover {
+            background-color: #047857;
+        }
+
+        .share-button.show {
+            display: block;
+        }
+
+        .instructions {
+            margin-top: 1.5rem;
+            color: #9ca3af;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+
+        .instructions p {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>British Slang Wordle</h1>
+        <p class="subtitle">Guess the 5-letter British slang word!</p>
+        
+        <div id="message" class="message"></div>
+
+        <div id="grid" class="grid"></div>
+
+        <div class="keyboard">
+            <div class="keyboard-row">
+                <button class="key" data-key="Q">Q</button>
+                <button class="key" data-key="W">W</button>
+                <button class="key" data-key="E">E</button>
+                <button class="key" data-key="R">R</button>
+                <button class="key" data-key="T">T</button>
+                <button class="key" data-key="Y">Y</button>
+                <button class="key" data-key="U">U</button>
+                <button class="key" data-key="I">I</button>
+                <button class="key" data-key="O">O</button>
+                <button class="key" data-key="P">P</button>
+            </div>
+            <div class="keyboard-row">
+                <button class="key" data-key="A">A</button>
+                <button class="key" data-key="S">S</button>
+                <button class="key" data-key="D">D</button>
+                <button class="key" data-key="F">F</button>
+                <button class="key" data-key="G">G</button>
+                <button class="key" data-key="H">H</button>
+                <button class="key" data-key="J">J</button>
+                <button class="key" data-key="K">K</button>
+                <button class="key" data-key="L">L</button>
+            </div>
+            <div class="keyboard-row">
+                <button class="key wide" data-key="ENTER">ENTER</button>
+                <button class="key" data-key="Z">Z</button>
+                <button class="key" data-key="X">X</button>
+                <button class="key" data-key="C">C</button>
+                <button class="key" data-key="V">V</button>
+                <button class="key" data-key="B">B</button>
+                <button class="key" data-key="N">N</button>
+                <button class="key" data-key="M">M</button>
+                <button class="key wide" data-key="DELETE">DELETE</button>
+            </div>
+        </div>
+
+        <button id="shareButton" class="share-button">Share Score 📋</button>
+        <button id="playAgain" class="play-again">Play Again</button>
+
+        <div class="instructions">
+            <p>Green = Correct position</p>
+            <p>Yellow = Wrong position</p>
+            <p>Gray = Not in word</p>
+        </div>
+    </div>
+
+    <script>
+        const BRITISH_SLANG = [
+            'BLOKE', 'CHAPS', 'FIVER', 'SKINT', 'DODGY', 'GUTTED',
+            'KNEES', 'PANTS', 'PRANG', 'QUID', 'SCRUB', 'BOGEY', 'NAFF',
+            'TELLY', 'SARKY', 'WONKY', 'MINGE', 'BONCE', 'CORGI', 'SPROG',
+            'SLING', 'MUCKY', 'GAFFE', 'BEVVY', 'BUDGE', 'CHUFF', 'PRAWN',
+            'CHEEKY', 'NUMPTY', 'KNOBBY', 'FANCY', 'PINTS', 'BLIMEY', 'GUBBA'
+        ];
+
+        let targetWord = '';
+        let guesses = [];
+        let currentGuess = '';
+        let gameOver = false;
+        let won = false;
+
+        const gridElement = document.getElementById('grid');
+        const messageElement = document.getElementById('message');
+        const playAgainButton = document.getElementById('playAgain');
+        const shareButton = document.getElementById('shareButton');
+        const keys = document.querySelectorAll('.key');
+
+        function startNewGame() {
+            targetWord = BRITISH_SLANG[Math.floor(Math.random() * BRITISH_SLANG.length)];
+            guesses = [];
+            currentGuess = '';
+            gameOver = false;
+            won = false;
+            messageElement.textContent = '';
+            messageElement.className = 'message';
+            playAgainButton.classList.remove('show');
+            shareButton.classList.remove('show');
+            
+            // Reset keyboard colors
+            keys.forEach(key => {
+                key.classList.remove('correct', 'present', 'absent');
+            });
+            
+            renderGrid();
+        }
+
+        function renderGrid() {
+            gridElement.innerHTML = '';
+            
+            for (let i = 0; i < 6; i++) {
+                const row = document.createElement('div');
+                row.className = 'row';
+                
+                const word = i < guesses.length ? guesses[i] : (i === guesses.length ? currentGuess : '');
+                
+                for (let j = 0; j < 5; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    const letter = word[j] || '';
+                    cell.textContent = letter;
+                    
+                    if (i < guesses.length) {
+                        const color = getLetterColor(letter, j, word);
+                        cell.classList.add(color);
+                    }
+                    
+                    row.appendChild(cell);
+                }
+                
+                gridElement.appendChild(row);
+            }
+        }
+
+        function getLetterColor(letter, index, word) {
+            if (word[index] === targetWord[index]) {
+                return 'correct';
+            }
+            if (targetWord.includes(letter)) {
+                return 'present';
+            }
+            return 'absent';
+        }
+
+        function handleKeyPress(key) {
+            if (gameOver) return;
+
+            if (key === 'ENTER') {
+                if (currentGuess.length !== 5) {
+                    showMessage('Word must be 5 letters!');
+                    return;
+                }
+
+                guesses.push(currentGuess);
+                updateKeyboardColors(currentGuess);
+
+                if (currentGuess === targetWord) {
+                    gameOver = true;
+                    won = true;
+                    showMessage('Brilliant! You got it! 🎉', true);
+                    shareButton.classList.add('show');
+                    playAgainButton.classList.add('show');
+                } else if (guesses.length >= 6) {
+                    gameOver = true;
+                    won = false;
+                    showMessage(`Game over! The word was ${targetWord}`);
+                    shareButton.classList.add('show');
+                    playAgainButton.classList.add('show');
+                }
+
+                currentGuess = '';
+                renderGrid();
+            } else if (key === 'DELETE') {
+                currentGuess = currentGuess.slice(0, -1);
+                renderGrid();
+            } else if (currentGuess.length < 5 && /^[A-Z]$/.test(key)) {
+                currentGuess += key;
+                renderGrid();
+            }
+        }
+
+        function updateKeyboardColors(word) {
+            for (let i = 0; i < word.length; i++) {
+                const letter = word[i];
+                const keyElement = document.querySelector(`[data-key="${letter}"]`);
+                
+                if (!keyElement) continue;
+                
+                if (targetWord[i] === letter) {
+                    keyElement.classList.remove('present', 'absent');
+                    keyElement.classList.add('correct');
+                } else if (targetWord.includes(letter) && !keyElement.classList.contains('correct')) {
+                    keyElement.classList.remove('absent');
+                    keyElement.classList.add('present');
+                } else if (!keyElement.classList.contains('correct') && !keyElement.classList.contains('present')) {
+                    keyElement.classList.add('absent');
+                }
+            }
+        }
+
+        function showMessage(text, isWin = false) {
+            messageElement.textContent = text;
+            messageElement.className = 'message show';
+            if (isWin) {
+                messageElement.classList.add('win');
+            }
+            
+            if (!isWin && !gameOver) {
+                setTimeout(() => {
+                    messageElement.textContent = '';
+                    messageElement.className = 'message';
+                }, 2000);
+            }
+        }
+
+        function generateShareText() {
+            const scoreText = won ? `${guesses.length}/6` : `X/6`;
+            let grid = '';
+            
+            for (let i = 0; i < guesses.length; i++) {
+                const guess = guesses[i];
+                for (let j = 0; j < 5; j++) {
+                    const letter = guess[j];
+                    if (targetWord[j] === letter) {
+                        grid += '🟩';
+                    } else if (targetWord.includes(letter)) {
+                        grid += '🟨';
+                    } else {
+                        grid += '⬜';
+                    }
+                }
+                grid += '\n';
+            }
+            
+            // 10% chance for british-salute, 90% chance for british-saIute (with capital I)
+            const url = Math.random() < 0.10 
+                ? 'https://tinyurl.com/british-salute' 
+                : 'https://tinyurl.com/british-saIute';
+            
+            // Format title as markdown link with UK flags
+            const shareText = `🇬🇧 [British Slang Wordle ${scoreText}](${url}) 🇬🇧\n\n${grid}\nGod save the Queen`;
+            
+            return shareText;
+        }
+
+        async function copyToClipboard() {
+            const shareText = generateShareText();
+            
+            try {
+                await navigator.clipboard.writeText(shareText);
+                const originalText = shareButton.textContent;
+                shareButton.textContent = 'Copied! ✓';
+                setTimeout(() => {
+                    shareButton.textContent = originalText;
+                }, 2000);
+            } catch (err) {
+                showMessage('Failed to copy to clipboard');
+            }
+        }
+
+        // Event listeners
+        keys.forEach(key => {
+            key.addEventListener('click', () => {
+                handleKeyPress(key.dataset.key);
+            });
+        });
+
+        document.addEventListener('keydown', (e) => {
+            const key = e.key.toUpperCase();
+            if (key === 'ENTER') {
+                handleKeyPress('ENTER');
+            } else if (key === 'BACKSPACE') {
+                handleKeyPress('DELETE');
+            } else if (/^[A-Z]$/.test(key)) {
+                handleKeyPress(key);
+            }
+        });
+
+        playAgainButton.addEventListener('click', startNewGame);
+
+        shareButton.addEventListener('click', copyToClipboard);
+
+        // Start the game
+        startNewGame();
+    </script>
+</body>
+</html>
