@@ -146,6 +146,7 @@
 
         .share-button {
             width: 100%;
+            min-width: 200px;
             background-color: #059669;
             color: white;
             font-weight: bold;
@@ -484,11 +485,11 @@
                 for (let _0x2a7c = 0; _0x2a7c < 5; _0x2a7c++) {
                     const _0x6b3d = _0x8f5e[_0x2a7c];
                     if (targetWord[_0x2a7c] === _0x6b3d) {
-                        _0x3c9f += atob('8J+fqQ==');
+                        _0x3c9f += '\u{1F7E9}';
                     } else if (targetWord.includes(_0x6b3d)) {
-                        _0x3c9f += atob('8J+fqA==');
+                        _0x3c9f += '\u{1F7E8}';
                     } else {
-                        _0x3c9f += atob('4q2c');
+                        _0x3c9f += '\u{2B1C}';
                     }
                 }
                 _0x3c9f += '\n';
@@ -503,7 +504,7 @@
                 ? atob('aHR0cHM6Ly90aW55dXJsLmNvbS9icml0aXNoLXNhbHV0ZQ==')
                 : atob('aHR0cHM6Ly90aW55dXJsLmNvbS9icml0aXNoLXNhSXV0ZQ==');
             
-            const _0x8b9e = `${atob('8J+HrfCfh7A=')} [${atob('QnJpdGlzaCBTbGFuZyBXb3JkbGU=')} #${_0x7a4e} ${_0x7e2a}](${_0x2d6f}) ${atob('8J+HrfCfh7A=')}\n\n${_0x3c9f}\n${atob('R29kIHNhdmUgdGhlIFF1ZWVu')}`;
+            const _0x8b9e = `\u{1F1EC}\u{1F1E7} [${atob('QnJpdGlzaCBTbGFuZyBXb3JkbGU=')} #${_0x7a4e} ${_0x7e2a}](${_0x2d6f}) \u{1F1EC}\u{1F1E7}\n\n${_0x3c9f}\n${atob('R29kIHNhdmUgdGhlIFF1ZWVu')}`;
             
             return _0x8b9e;
         }
@@ -515,7 +516,7 @@
             try {
                 await navigator.clipboard.writeText(_0x2f8d);
                 const _0x4b7c = shareButton.textContent;
-                shareButton.textContent = _0x9a1e ? atob('Q29waWVkISAi4pyF') : atob('Q29waWVkISAi4pyT');
+                shareButton.textContent = _0x9a1e ? 'Copied! \u2705' : 'Copied! \u2713';
                 setTimeout(() => { shareButton.textContent = _0x4b7c; }, 2000);
             } catch (_0x6e3a) {
                 showMessage('Failed to copy to clipboard');
