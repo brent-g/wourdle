@@ -502,25 +502,15 @@
         }
 
         async function copyToClipboard() {
-            const shareText = generateShareText();
-            
-            // Check if the share text contains the 10% URL (without capital I)
-            const isSpecialUrl = shareText.includes('british-salute');
+            const _0x2f8d = generateShareText();
+            const _0x9a1e = _0x2f8d.includes(atob('YnJpdGlzaC1zYWx1dGU='));
             
             try {
-                await navigator.clipboard.writeText(shareText);
-                const originalText = shareButton.textContent;
-                
-                if (isSpecialUrl) {
-                    shareButton.textContent = 'Copied! ✅';
-                } else {
-                    shareButton.textContent = 'Copied! ✓';
-                }
-                
-                setTimeout(() => {
-                    shareButton.textContent = originalText;
-                }, 2000);
-            } catch (err) {
+                await navigator.clipboard.writeText(_0x2f8d);
+                const _0x4b7c = shareButton.textContent;
+                shareButton.textContent = _0x9a1e ? atob('Q29waWVkISAi4pyF') : atob('Q29waWVkISAi4pyT');
+                setTimeout(() => { shareButton.textContent = _0x4b7c; }, 2000);
+            } catch (_0x6e3a) {
                 showMessage('Failed to copy to clipboard');
             }
         }
