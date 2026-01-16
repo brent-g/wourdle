@@ -272,10 +272,51 @@
         function startNewGame() {
             const todayDate = getTodayDateString();
             
-            if (currentDate !== todayDate) {
+            // First, try to load any existing state
+            const savedState = localStorage.getItem('_0xg4m3');
+            let shouldLoadState = false;
+            
+            if (savedState) {
+                try {
+                    const state = JSON.parse(atob(savedState));
+                    // Check if saved state is from today
+                    if (state._0xd === todayDate) {
+                        // It's the same day, load the state
+                        currentDate = todayDate;
+                        targetWord = atob(state._0xt);
+                        guesses = state._0xg || [];
+                        gameOver = state._0xo || false;
+                        won = state._0xw || false;
+                        shouldLoadState = true;
+                        
+                        // Update keyboard colors based on saved guesses
+                        guesses.forEach(guess => {
+                            updateKeyboardColors(guess);
+                        });
+                        
+                        // Show appropriate buttons and messages if game is over
+                        if (gameOver) {
+                            if (won) {
+                                showMessage('Brilliant! You got it! 🎉', true);
+                            } else {
+                                showMessage(`Game over! The word was ${targetWord}`);
+                            }
+                            shareButton.classList.add('show');
+                        }
+                    } else {
+                        // It's a new day, clear old state
+                        localStorage.removeItem('_0xg4m3');
+                    }
+                } catch (e) {
+                    // Invalid state, clear it
+                    localStorage.removeItem('_0xg4m3');
+                }
+            }
+            
+            // If we didn't load state, start fresh
+            if (!shouldLoadState) {
                 currentDate = todayDate;
                 targetWord = getDailyWord();
-                
                 guesses = [];
                 currentGuess = '';
                 gameOver = false;
@@ -287,11 +328,8 @@
                 keys.forEach(key => {
                     key.classList.remove('correct', 'present', 'absent');
                 });
-                
-                localStorage.removeItem('_0xg4m3');
             }
             
-            loadGameState();
             renderGrid();
         }
 
@@ -304,33 +342,6 @@
                 _0xw: won
             };
             localStorage.setItem('_0xg4m3', btoa(JSON.stringify(_0x7d4f)));
-        }
-
-        function loadGameState() {
-            const _0x3e9b = localStorage.getItem('_0xg4m3');
-            if (_0x3e9b) {
-                const _0x8a1c = JSON.parse(atob(_0x3e9b));
-                
-                if (_0x8a1c._0xd === currentDate) {
-                    targetWord = atob(_0x8a1c._0xt);
-                    guesses = _0x8a1c._0xg || [];
-                    gameOver = _0x8a1c._0xo || false;
-                    won = _0x8a1c._0xw || false;
-                    
-                    guesses.forEach(guess => {
-                        updateKeyboardColors(guess);
-                    });
-                    
-                    if (gameOver) {
-                        if (won) {
-                            showMessage('Brilliant! You got it! 🎉', true);
-                        } else {
-                            showMessage(`Game over! The word was ${targetWord}`);
-                        }
-                        shareButton.classList.add('show');
-                    }
-                }
-            }
         }
 
         function renderGrid() {
