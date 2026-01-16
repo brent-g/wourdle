@@ -387,12 +387,36 @@
         }
 
         function getLetterColor(letter, index, word) {
+            // If letter is in correct position, it's green
             if (word[index] === targetWord[index]) {
                 return 'correct';
             }
-            if (targetWord.includes(letter)) {
+            
+            // Count how many of this letter are in the target word
+            const letterCountInTarget = targetWord.split('').filter(l => l === letter).length;
+            
+            // Count how many of this letter are already correctly placed (green)
+            let correctCount = 0;
+            for (let i = 0; i < word.length; i++) {
+                if (word[i] === letter && targetWord[i] === letter) {
+                    correctCount++;
+                }
+            }
+            
+            // Count how many of this letter appear before this position in the guess
+            // that are either correct or will be marked as present
+            let markedCount = correctCount;
+            for (let i = 0; i < index; i++) {
+                if (word[i] === letter && targetWord[i] !== letter) {
+                    markedCount++;
+                }
+            }
+            
+            // If this letter exists in target and we haven't used up all instances
+            if (targetWord.includes(letter) && markedCount < letterCountInTarget) {
                 return 'present';
             }
+            
             return 'absent';
         }
 
