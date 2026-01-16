@@ -258,19 +258,16 @@
     </div>
 
     <script>
-        const BRITISH_SLANG = [
-            'BLOKE', 'CHAPS', 'FIVER', 'SKINT', 'DODGY', 'GUTTED',
-            'KNEES', 'PANTS', 'PRANG', 'QUID', 'SCRUB', 'BOGEY', 'NAFF',
-            'TELLY', 'SARKY', 'WONKY', 'MINGE', 'BONCE', 'CORGI', 'SPROG',
-            'SLING', 'MUCKY', 'GAFFE', 'BEVVY', 'BUDGE', 'CHUFF', 'PRAWN',
-            'CHEEKY', 'NUMPTY', 'KNOBBY', 'FANCY', 'PINTS', 'BLIMEY', 'GUBBA'
-        ];
+        // Encoded word list
+        const _0x4a2b = 'QU1QRUQsQkFOVFMsQkFSRUUsQkVWVlksQkxPS0UsQ0xPVVQsQ1JFUFMsRFJBTUEsRVhUUkEsRkVMTEEsRklUVFksR09CQlksR1JBRlQsSFlQRUQsSk9LRVMsS0lOREEsTElOS1MsTUFSR1MsTkFOR1MsUElOVFMsUkFURUQsU0FMVFksU0VTSFksU0hPT0ssU0tJTlQsU05BQ0ssU09VTkQsU1BFTkQsU1RVU0gsVElOR1MsVFJZTkEsVklCRVMsV0FTVEUsV0hBQ0ssV0lGRVksWUFSRFksWUVFU0gsWU9VTkcsWkVTVFksR1VCQkE=';
+        const BRITISH_SLANG = atob(_0x4a2b).split(',');
 
         let targetWord = '';
         let guesses = [];
         let currentGuess = '';
         let gameOver = false;
         let won = false;
+        let currentDate = '';
 
         const gridElement = document.getElementById('grid');
         const messageElement = document.getElementById('message');
@@ -278,23 +275,88 @@
         const shareButton = document.getElementById('shareButton');
         const keys = document.querySelectorAll('.key');
 
+        function getTodayDateString() {
+            const now = new Date();
+            const year = now.getUTCFullYear();
+            const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+            const day = String(now.getUTCDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function getDailyWord() {
+            const _0x1f3d = getTodayDateString();
+            let _0x5c8a = 0;
+            for (let _0x9b2e = 0; _0x9b2e < _0x1f3d.length; _0x9b2e++) {
+                _0x5c8a = ((_0x5c8a << 5) - _0x5c8a) + _0x1f3d.charCodeAt(_0x9b2e);
+                _0x5c8a = _0x5c8a & _0x5c8a;
+            }
+            return BRITISH_SLANG[Math.abs(_0x5c8a) % BRITISH_SLANG.length];
+        }
+
         function startNewGame() {
-            targetWord = BRITISH_SLANG[Math.floor(Math.random() * BRITISH_SLANG.length)];
-            guesses = [];
-            currentGuess = '';
-            gameOver = false;
-            won = false;
-            messageElement.textContent = '';
-            messageElement.className = 'message';
-            playAgainButton.classList.remove('show');
-            shareButton.classList.remove('show');
+            const todayDate = getTodayDateString();
             
-            // Reset keyboard colors
-            keys.forEach(key => {
-                key.classList.remove('correct', 'present', 'absent');
-            });
+            if (currentDate !== todayDate) {
+                currentDate = todayDate;
+                targetWord = getDailyWord();
+                
+                guesses = [];
+                currentGuess = '';
+                gameOver = false;
+                won = false;
+                messageElement.textContent = '';
+                messageElement.className = 'message';
+                playAgainButton.classList.remove('show');
+                shareButton.classList.remove('show');
+                
+                keys.forEach(key => {
+                    key.classList.remove('correct', 'present', 'absent');
+                });
+                
+                localStorage.removeItem('_0xg4m3');
+            }
             
+            loadGameState();
             renderGrid();
+        }
+
+        function saveGameState() {
+            const _0x7d4f = {
+                _0xd: currentDate,
+                _0xt: btoa(targetWord),
+                _0xg: guesses,
+                _0xo: gameOver,
+                _0xw: won
+            };
+            localStorage.setItem('_0xg4m3', btoa(JSON.stringify(_0x7d4f)));
+        }
+
+        function loadGameState() {
+            const _0x3e9b = localStorage.getItem('_0xg4m3');
+            if (_0x3e9b) {
+                const _0x8a1c = JSON.parse(atob(_0x3e9b));
+                
+                if (_0x8a1c._0xd === currentDate) {
+                    targetWord = atob(_0x8a1c._0xt);
+                    guesses = _0x8a1c._0xg || [];
+                    gameOver = _0x8a1c._0xo || false;
+                    won = _0x8a1c._0xw || false;
+                    
+                    guesses.forEach(guess => {
+                        updateKeyboardColors(guess);
+                    });
+                    
+                    if (gameOver) {
+                        if (won) {
+                            showMessage('Brilliant! You got it! 🎉', true);
+                        } else {
+                            showMessage(`Game over! The word was ${targetWord}`);
+                        }
+                        shareButton.classList.add('show');
+                        playAgainButton.classList.add('show');
+                    }
+                }
+            }
         }
 
         function renderGrid() {
@@ -361,6 +423,7 @@
                 }
 
                 currentGuess = '';
+                saveGameState();
                 renderGrid();
             } else if (key === 'DELETE') {
                 currentGuess = currentGuess.slice(0, -1);
@@ -468,7 +531,23 @@
             }
         });
 
-        playAgainButton.addEventListener('click', startNewGame);
+        playAgainButton.addEventListener('click', () => {
+            localStorage.removeItem('_0xg4m3');
+            guesses = [];
+            currentGuess = '';
+            gameOver = false;
+            won = false;
+            messageElement.textContent = '';
+            messageElement.className = 'message';
+            playAgainButton.classList.remove('show');
+            shareButton.classList.remove('show');
+            
+            keys.forEach(key => {
+                key.classList.remove('correct', 'present', 'absent');
+            });
+            
+            renderGrid();
+        });
 
         shareButton.addEventListener('click', copyToClipboard);
 
