@@ -144,28 +144,6 @@
             background-color: #1f2937;
         }
 
-        .play-again {
-            width: 100%;
-            background-color: #2563eb;
-            color: white;
-            font-weight: bold;
-            padding: 0.75rem 1rem;
-            border: none;
-            border-radius: 0.25rem;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.2s;
-            display: none;
-        }
-
-        .play-again:hover {
-            background-color: #1d4ed8;
-        }
-
-        .play-again.show {
-            display: block;
-        }
-
         .share-button {
             width: 100%;
             background-color: #059669;
@@ -248,7 +226,6 @@
         </div>
 
         <button id="shareButton" class="share-button">Share Score 📋</button>
-        <button id="playAgain" class="play-again">Play Again</button>
 
         <div class="instructions">
             <p>Green = Correct position</p>
@@ -271,7 +248,6 @@
 
         const gridElement = document.getElementById('grid');
         const messageElement = document.getElementById('message');
-        const playAgainButton = document.getElementById('playAgain');
         const shareButton = document.getElementById('shareButton');
         const keys = document.querySelectorAll('.key');
 
@@ -306,7 +282,6 @@
                 won = false;
                 messageElement.textContent = '';
                 messageElement.className = 'message';
-                playAgainButton.classList.remove('show');
                 shareButton.classList.remove('show');
                 
                 keys.forEach(key => {
@@ -353,7 +328,6 @@
                             showMessage(`Game over! The word was ${targetWord}`);
                         }
                         shareButton.classList.add('show');
-                        playAgainButton.classList.add('show');
                     }
                 }
             }
@@ -437,13 +411,11 @@
                     won = true;
                     showMessage('Brilliant! You got it! 🎉', true);
                     shareButton.classList.add('show');
-                    playAgainButton.classList.add('show');
                 } else if (guesses.length >= 6) {
                     gameOver = true;
                     won = false;
                     showMessage(`Game over! The word was ${targetWord}`);
                     shareButton.classList.add('show');
-                    playAgainButton.classList.add('show');
                 }
 
                 currentGuess = '';
@@ -553,24 +525,6 @@
             } else if (/^[A-Z]$/.test(key)) {
                 handleKeyPress(key);
             }
-        });
-
-        playAgainButton.addEventListener('click', () => {
-            localStorage.removeItem('_0xg4m3');
-            guesses = [];
-            currentGuess = '';
-            gameOver = false;
-            won = false;
-            messageElement.textContent = '';
-            messageElement.className = 'message';
-            playAgainButton.classList.remove('show');
-            shareButton.classList.remove('show');
-            
-            keys.forEach(key => {
-                key.classList.remove('correct', 'present', 'absent');
-            });
-            
-            renderGrid();
         });
 
         shareButton.addEventListener('click', copyToClipboard);
