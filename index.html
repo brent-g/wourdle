@@ -504,10 +504,19 @@
         async function copyToClipboard() {
             const shareText = generateShareText();
             
+            // Check if the share text contains the 10% URL (without capital I)
+            const isSpecialUrl = shareText.includes('british-salute');
+            
             try {
                 await navigator.clipboard.writeText(shareText);
                 const originalText = shareButton.textContent;
-                shareButton.textContent = 'Copied! ✓';
+                
+                if (isSpecialUrl) {
+                    shareButton.textContent = 'Copied! ✅';
+                } else {
+                    shareButton.textContent = 'Copied! ✓';
+                }
+                
                 setTimeout(() => {
                     shareButton.textContent = originalText;
                 }, 2000);
