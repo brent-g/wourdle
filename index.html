@@ -154,36 +154,6 @@
             background-color: #1f2937;
         }
 
-        .share-button {
-            width: 100%;
-            min-width: 200px;
-            min-height: 56px;
-            background-color: #059669;
-            color: white;
-            font-weight: bold;
-            padding: 0.75rem 1rem;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-size: clamp(0.875rem, 3.5vw, 1rem);
-            transition: background-color 0.2s;
-            display: none;
-            margin-bottom: 0.5rem;
-            touch-action: manipulation;
-        }
-
-        .share-button:hover {
-            background-color: #047857;
-        }
-
-        .share-button:active {
-            transform: scale(0.98);
-        }
-
-        .share-button.show {
-            display: block;
-        }
-
         .instructions {
             margin-top: 1.5rem;
             color: #9ca3af;
@@ -213,6 +183,142 @@
                 gap: 0.15rem;
             }
         }
+
+        /* Modal styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: #1f2937;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 400px;
+            width: 100%;
+            position: relative;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: #9ca3af;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 2rem;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.25rem;
+            transition: background-color 0.2s;
+        }
+
+        .modal-close:hover {
+            background-color: #374151;
+        }
+
+        .modal-title {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .modal-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background-color: #111827;
+            border-radius: 0.5rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #9ca3af;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        .modal-grid {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .modal-grid-title {
+            color: #9ca3af;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-grid-content {
+            display: inline-block;
+            text-align: left;
+            line-height: 1.8;
+            font-size: 1.2rem;
+        }
+
+        .modal-definition {
+            background: #374151;
+            color: #10b981;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            margin: 1rem 0;
+            border: 2px solid #10b981;
+        }
+
+        .modal-share-button {
+            width: 100%;
+            min-height: 56px;
+            background-color: #059669;
+            color: white;
+            font-weight: bold;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+            touch-action: manipulation;
+        }
+
+        .modal-share-button:hover {
+            background-color: #047857;
+        }
+
+        .modal-share-button:active {
+            transform: scale(0.98);
+        }
     </style>
 </head>
 <body>
@@ -222,8 +328,6 @@
         <div id="debugInfo" style="display: none; background: #374151; color: #fbbf24; padding: 0.5rem; border-radius: 0.25rem; margin-bottom: 1rem; font-size: 0.875rem; text-align: center;"></div>
         
         <div id="message" class="message"></div>
-
-        <div id="definition" style="display: none; background: #1f2937; color: #10b981; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; text-align: center; border: 2px solid #10b981;"></div>
 
         <div id="grid" class="grid"></div>
 
@@ -264,12 +368,38 @@
             </div>
         </div>
 
-        <button id="shareButton" class="share-button">Share Score 📋</button>
-
         <div class="instructions">
             <p>Green = Correct position</p>
             <p>Yellow = Wrong position</p>
             <p>Gray = Not in word</p>
+        </div>
+    </div>
+
+    <!-- Score Modal -->
+    <div id="scoreModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModal">&times;</button>
+            <h2 class="modal-title" id="modalTitle">Brilliant!</h2>
+            
+            <div class="modal-stats">
+                <div class="stat">
+                    <div class="stat-value" id="statGuesses">-</div>
+                    <div class="stat-label">Guesses</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="statPuzzle">-</div>
+                    <div class="stat-label">Puzzle</div>
+                </div>
+            </div>
+
+            <div class="modal-grid">
+                <div class="modal-grid-title">Your Result</div>
+                <div class="modal-grid-content" id="modalGridContent"></div>
+            </div>
+
+            <div class="modal-definition" id="modalDefinition"></div>
+
+            <button class="modal-share-button" id="modalShareButton">Share Score 📋</button>
         </div>
     </div>
 
@@ -352,10 +482,17 @@
 
         const gridElement = document.getElementById('grid');
         const messageElement = document.getElementById('message');
-        const shareButton = document.getElementById('shareButton');
         const keys = document.querySelectorAll('.key');
         const debugInfo = document.getElementById('debugInfo');
-        const definitionElement = document.getElementById('definition');
+        
+        const scoreModal = document.getElementById('scoreModal');
+        const closeModal = document.getElementById('closeModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalShareButton = document.getElementById('modalShareButton');
+        const statGuesses = document.getElementById('statGuesses');
+        const statPuzzle = document.getElementById('statPuzzle');
+        const modalGridContent = document.getElementById('modalGridContent');
+        const modalDefinition = document.getElementById('modalDefinition');
 
         function getTodayDateString() {
             // Check for debug date in URL parameters
@@ -419,8 +556,7 @@
                             } else {
                                 showMessage(`Game over! The word was ${targetWord}`);
                             }
-                            showDefinition(targetWord);
-                            shareButton.classList.add('show');
+                            // Don't auto-show modal on reload, user can see their grid
                         }
                     } else {
                         // It's a new day, clear old state
@@ -442,7 +578,6 @@
                 won = false;
                 messageElement.textContent = '';
                 messageElement.className = 'message';
-                shareButton.classList.remove('show');
                 
                 keys.forEach(key => {
                     key.classList.remove('correct', 'present', 'absent');
@@ -555,14 +690,12 @@
                     gameOver = true;
                     won = true;
                     showMessage('Brilliant! You got it! 🎉', true);
-                    showDefinition(targetWord);
-                    shareButton.classList.add('show');
+                    setTimeout(() => showScoreModal(), 500);
                 } else if (guesses.length >= 6) {
                     gameOver = true;
                     won = false;
                     showMessage(`Game over! The word was ${targetWord}`);
-                    showDefinition(targetWord);
-                    shareButton.classList.add('show');
+                    setTimeout(() => showScoreModal(), 500);
                 }
 
                 currentGuess = '';
@@ -596,12 +729,49 @@
             }
         }
 
-        function showDefinition(word) {
-            const definition = DEFINITIONS[word];
-            if (definition) {
-                definitionElement.innerHTML = `<strong>${word}</strong>: ${definition}`;
-                definitionElement.style.display = 'block';
+        function showScoreModal() {
+            // Set modal title
+            if (won) {
+                modalTitle.textContent = guesses.length === 1 ? 'Genius!' : 'Brilliant!';
+            } else {
+                modalTitle.textContent = 'Better luck tomorrow!';
             }
+            
+            // Set stats
+            statGuesses.textContent = won ? guesses.length : 'X';
+            const epochDate = new Date(2026, 0, 16);
+            const todayDate = new Date();
+            epochDate.setHours(0, 0, 0, 0);
+            todayDate.setHours(0, 0, 0, 0);
+            const puzzleNum = Math.floor((todayDate.getTime() - epochDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+            statPuzzle.textContent = `#${puzzleNum}`;
+            
+            // Set grid
+            let gridHTML = '';
+            for (let i = 0; i < guesses.length; i++) {
+                const guess = guesses[i];
+                for (let j = 0; j < 5; j++) {
+                    const letter = guess[j];
+                    if (targetWord[j] === letter) {
+                        gridHTML += '🟩';
+                    } else if (targetWord.includes(letter)) {
+                        gridHTML += '🟨';
+                    } else {
+                        gridHTML += '⬜';
+                    }
+                }
+                gridHTML += '<br>';
+            }
+            modalGridContent.innerHTML = gridHTML;
+            
+            // Set definition
+            const definition = DEFINITIONS[targetWord];
+            if (definition) {
+                modalDefinition.innerHTML = `<strong>${targetWord}</strong>: ${definition}`;
+            }
+            
+            // Show modal
+            scoreModal.classList.add('show');
         }
 
         function showMessage(text, isWin = false) {
@@ -660,9 +830,12 @@
             try {
                 // Try modern clipboard API first
                 await navigator.clipboard.writeText(_0x2f8d);
-                const _0x4b7c = shareButton.textContent;
-                shareButton.textContent = _0x9a1e ? 'Copied! \u2705' : 'Copied! \u2713';
-                setTimeout(() => { shareButton.textContent = _0x4b7c; }, 2000);
+                const _0x4b7c = modalShareButton.textContent;
+                modalShareButton.textContent = _0x9a1e ? 'Copied! \u2705' : 'Copied! \u2713';
+                setTimeout(() => { 
+                    modalShareButton.textContent = _0x4b7c;
+                    scoreModal.classList.remove('show');
+                }, 1000);
             } catch (_0x6e3a) {
                 // Fallback method for older browsers or non-HTTPS
                 try {
@@ -678,9 +851,12 @@
                     document.body.removeChild(textArea);
                     
                     if (successful) {
-                        const _0x4b7c = shareButton.textContent;
-                        shareButton.textContent = _0x9a1e ? 'Copied! \u2705' : 'Copied! \u2713';
-                        setTimeout(() => { shareButton.textContent = _0x4b7c; }, 2000);
+                        const _0x4b7c = modalShareButton.textContent;
+                        modalShareButton.textContent = _0x9a1e ? 'Copied! \u2705' : 'Copied! \u2713';
+                        setTimeout(() => { 
+                            modalShareButton.textContent = _0x4b7c;
+                            scoreModal.classList.remove('show');
+                        }, 1000);
                     } else {
                         showMessage('Failed to copy to clipboard');
                     }
@@ -708,7 +884,18 @@
             }
         });
 
-        shareButton.addEventListener('click', copyToClipboard);
+        // Modal event listeners
+        closeModal.addEventListener('click', () => {
+            scoreModal.classList.remove('show');
+        });
+
+        scoreModal.addEventListener('click', (e) => {
+            if (e.target === scoreModal) {
+                scoreModal.classList.remove('show');
+            }
+        });
+
+        modalShareButton.addEventListener('click', copyToClipboard);
 
         // Start the game
         startNewGame();
