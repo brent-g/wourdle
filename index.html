@@ -185,6 +185,7 @@
     <div class="container">
         <h1>British Slang Wordle</h1>
         <p class="subtitle">Guess the 5-letter British slang word!</p>
+        <div id="debugInfo" style="display: none; background: #374151; color: #fbbf24; padding: 0.5rem; border-radius: 0.25rem; margin-bottom: 1rem; font-size: 0.875rem; text-align: center;"></div>
         
         <div id="message" class="message"></div>
 
@@ -252,12 +253,25 @@
         const messageElement = document.getElementById('message');
         const shareButton = document.getElementById('shareButton');
         const keys = document.querySelectorAll('.key');
+        const debugInfo = document.getElementById('debugInfo');
 
         function getTodayDateString() {
+            // Check for debug date in URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const debugDate = urlParams.get('date');
+            
+            if (debugDate) {
+                // Validate format YYYY-MM-DD
+                if (/^\d{4}-\d{2}-\d{2}$/.test(debugDate)) {
+                    console.log('DEBUG MODE: Using date', debugDate);
+                    return debugDate;
+                }
+            }
+            
             const now = new Date();
-            const year = now.getUTCFullYear();
-            const month = String(now.getUTCMonth() + 1).padStart(2, '0');
-            const day = String(now.getUTCDate()).padStart(2, '0');
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
         }
 
@@ -330,6 +344,21 @@
                 keys.forEach(key => {
                     key.classList.remove('correct', 'present', 'absent');
                 });
+            }
+            
+            // Show debug info if in debug mode
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('date')) {
+                const debugDateObj = new Date(currentDate);
+                const epochDate = new Date(2026, 0, 16);
+                debugDateObj.setHours(0, 0, 0, 0);
+                epochDate.setHours(0, 0, 0, 0);
+                const puzzleNum = Math.floor((debugDateObj.getTime() - epochDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+                
+                debugInfo.style.display = 'block';
+                debugInfo.textContent = `🐛 DEBUG MODE | Date: ${currentDate} | Word: ${targetWord} | Puzzle #${puzzleNum}`;
+            } else {
+                debugInfo.style.display = 'none';
             }
             
             renderGrid();
@@ -496,10 +525,11 @@
                 _0x3c9f += '\n';
             }
             
-            const _0x4e8a = new Date(Date.UTC(2026, 0, 16));
+            const _0x4e8a = new Date(2026, 0, 16);
             const _0x9c2b = new Date();
-            const _0x5f1d = Date.UTC(_0x9c2b.getUTCFullYear(), _0x9c2b.getUTCMonth(), _0x9c2b.getUTCDate());
-            const _0x7a4e = Math.floor((_0x5f1d - _0x4e8a.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+            _0x4e8a.setHours(0, 0, 0, 0);
+            _0x9c2b.setHours(0, 0, 0, 0);
+            const _0x7a4e = Math.floor((_0x9c2b.getTime() - _0x4e8a.getTime()) / (1000 * 60 * 60 * 24)) + 1;
             
             const _0x2d6f = Math.random() < 0.05 
                 ? atob('aHR0cHM6Ly90aW55dXJsLmNvbS9icml0aXNoLXNhbHV0ZQ==')
