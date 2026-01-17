@@ -189,6 +189,8 @@
         
         <div id="message" class="message"></div>
 
+        <div id="definition" style="display: none; background: #1f2937; color: #10b981; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; text-align: center; border: 2px solid #10b981;"></div>
+
         <div id="grid" class="grid"></div>
 
         <div class="keyboard">
@@ -241,6 +243,71 @@
         // Encoded word list
         const _0x4a2b = 'QU1QRUQsQkFOVFMsQkFSRUUsQkVWVlksQkxPS0UsQ0xPVVQsQ1JFUFMsRFJBTUEsRVhUUkEsRkVMTEEsRklUVFksR09CQlksR1JBRlQsSFlQRUQsSk9LRVMsS0lOREEsTElOS1MsTUFSR1MsTkFOR1MsUElOVFMsUkFURUQsU0FMVFksU0VTSFksU0hPT0ssU0tJTlQsU05BQ0ssU09VTkQsU1BFTkQsU1RVU0gsVElOR1MsVFJZTkEsVklCRVMsV0FTVEUsV0hBQ0ssV0lGRVksWUFSRFksWUVFU0gsWU9VTkcsWkVTVFksR1VCQkEsQlJJTEwsQ0hBVlMsRE9ER1ksRkFGRlMsRklWRVIsR0FGRlMsR0VFWkUsR1JVQlksSkFNTVksS05BQ0ssTEFTU1ksTUFURVMsTVVDS1ksUEVOR1MsUVVJRFMsU0NSQU4sU0tJVkUsU05PR1MsU1dPVFMsVEFMTFksWU9OS1M=';
         const BRITISH_SLANG = atob(_0x4a2b).split(',');
+        
+        // Definitions for each word
+        const DEFINITIONS = {
+            'AMPED': 'excited, pumped up',
+            'BANTS': 'playful banter, jokes',
+            'BAREE': 'very, a lot (London slang)',
+            'BEVVY': 'alcoholic drink',
+            'BLOKE': 'man, guy',
+            'BRILL': 'brilliant, excellent',
+            'CHAVS': 'working-class youth with flashy style',
+            'CLOUT': 'influence, power',
+            'CREPS': 'trainers, sneakers',
+            'DODGY': 'suspicious, unreliable',
+            'DRAMA': 'unnecessary conflict',
+            'EXTRA': 'over the top, excessive',
+            'FAFFS': 'wastes time, messes around',
+            'FELLA': 'fellow, guy',
+            'FITTY': 'attractive person',
+            'FIVER': 'five-pound note',
+            'GAFFS': 'houses, homes',
+            'GEEZE': 'geezer, man',
+            'GOBBY': 'loud-mouthed, mouthy',
+            'GRAFT': 'hard work, hustle',
+            'GRUBY': 'dirty, grimy',
+            'GUBBA': "a colloquial term for guv'na",
+            'HYPED': 'excited, enthusiastic',
+            'JAMMY': 'lucky',
+            'JOKES': 'funny, entertaining',
+            'KINDA': 'kind of, somewhat',
+            'KNACK': 'skill, talent',
+            'LASSY': 'young woman, lass',
+            'LINKS': 'meet up, hang out',
+            'MARGS': 'margaritas',
+            'MATES': 'friends',
+            'MUCKY': 'dirty, filthy',
+            'NANGS': 'nitrous oxide canisters',
+            'PENGS': 'attractive things/people',
+            'PINTS': 'beers',
+            'QUIDS': 'pounds (currency)',
+            'RATED': 'approved, respected',
+            'SALTY': 'bitter, upset',
+            'SCRAN': 'food',
+            'SESHY': 'party, session',
+            'SHOOK': 'shocked, surprised',
+            'SKINT': 'broke, no money',
+            'SKIVE': 'skip work/school',
+            'SNACK': 'attractive person',
+            'SNOGS': 'kisses',
+            'SOUND': 'good, alright',
+            'SPEND': 'waste money',
+            'STUSH': 'fancy, posh',
+            'SWOTS': 'studies hard, nerds',
+            'TALLY': 'tally ho, goodbye',
+            'TINGS': 'things, people (Caribbean slang)',
+            'TRYNA': 'trying to',
+            'VIBES': 'atmosphere, mood',
+            'WASTE': 'useless person',
+            'WHACK': 'bad, unfair',
+            'WIFEY': 'girlfriend, partner',
+            'YARDY': 'Jamaican person (UK slang)',
+            'YEESH': 'exclamation of dismay',
+            'YONKS': 'a long time',
+            'YOUNG': 'youth, young person',
+            'ZESTY': 'energetic, flamboyant'
+        };
 
         let targetWord = '';
         let guesses = [];
@@ -254,6 +321,7 @@
         const shareButton = document.getElementById('shareButton');
         const keys = document.querySelectorAll('.key');
         const debugInfo = document.getElementById('debugInfo');
+        const definitionElement = document.getElementById('definition');
 
         function getTodayDateString() {
             // Check for debug date in URL parameters
@@ -317,6 +385,7 @@
                             } else {
                                 showMessage(`Game over! The word was ${targetWord}`);
                             }
+                            showDefinition(targetWord);
                             shareButton.classList.add('show');
                         }
                     } else {
@@ -452,11 +521,13 @@
                     gameOver = true;
                     won = true;
                     showMessage('Brilliant! You got it! 🎉', true);
+                    showDefinition(targetWord);
                     shareButton.classList.add('show');
                 } else if (guesses.length >= 6) {
                     gameOver = true;
                     won = false;
                     showMessage(`Game over! The word was ${targetWord}`);
+                    showDefinition(targetWord);
                     shareButton.classList.add('show');
                 }
 
@@ -488,6 +559,14 @@
                 } else if (!keyElement.classList.contains('correct') && !keyElement.classList.contains('present')) {
                     keyElement.classList.add('absent');
                 }
+            }
+        }
+
+        function showDefinition(word) {
+            const definition = DEFINITIONS[word];
+            if (definition) {
+                definitionElement.innerHTML = `<strong>${word}</strong>: ${definition}`;
+                definitionElement.style.display = 'block';
             }
         }
 
@@ -545,12 +624,35 @@
             const _0x9a1e = _0x2f8d.includes(atob('YnJpdGlzaC1zYWx1dGU='));
             
             try {
+                // Try modern clipboard API first
                 await navigator.clipboard.writeText(_0x2f8d);
                 const _0x4b7c = shareButton.textContent;
                 shareButton.textContent = _0x9a1e ? 'Copied! \u2705' : 'Copied! \u2713';
                 setTimeout(() => { shareButton.textContent = _0x4b7c; }, 2000);
             } catch (_0x6e3a) {
-                showMessage('Failed to copy to clipboard');
+                // Fallback method for older browsers or non-HTTPS
+                try {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = _0x2f8d;
+                    textArea.style.position = 'fixed';
+                    textArea.style.left = '-999999px';
+                    textArea.style.top = '-999999px';
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    const successful = document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    
+                    if (successful) {
+                        const _0x4b7c = shareButton.textContent;
+                        shareButton.textContent = _0x9a1e ? 'Copied! \u2705' : 'Copied! \u2713';
+                        setTimeout(() => { shareButton.textContent = _0x4b7c; }, 2000);
+                    } else {
+                        showMessage('Failed to copy to clipboard');
+                    }
+                } catch (fallbackError) {
+                    showMessage('Failed to copy to clipboard');
+                }
             }
         }
 
