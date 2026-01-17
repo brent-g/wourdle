@@ -556,7 +556,8 @@
                             } else {
                                 showMessage(`Game over! The word was ${targetWord}`);
                             }
-                            // Don't auto-show modal on reload, user can see their grid
+                            // Show modal after a short delay
+                            setTimeout(() => showScoreModal(), 500);
                         }
                     } else {
                         // It's a new day, clear old state
